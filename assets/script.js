@@ -1,4 +1,7 @@
 let ipcRenderer;
+let hasElectron = false;
+let fs;
+let path;
 
 try {
   ({ ipcRenderer } = require('electron'));
@@ -9,6 +12,13 @@ try {
   ipcRenderer.on('end-print', () => {
     document.body.classList.remove('printing');
   });
+
+  const { remote } = require('electron');
+
+  fs = remote.require('fs');
+  path = remote.require('path');
+
+  hasElectron = true;
 } catch (err) {}
 
 const markdown = window.markdownit();
@@ -25,19 +35,33 @@ document.addEventListener('drop', (event) => {
   const file = Array.from(event.dataTransfer.files)[0];
 
   if (file.type === 'text/markdown') {
-    loadMarkdownFile(file);
-
+    // clear reload interval if applicable
     if (fileReloadInterval) {
       clearInterval(fileReloadInterval);
     }
 
-    try {
-      // if in electron, reload markdown periodically
-      require('electron');
+    if (hasElectron) {
+      loadMarkdownFile(file.name, fs.readFileSync(file.path).toString(), () => {
+        fixImageSources(file.path);
+      });
+
+      // reload periodically
       fileReloadInterval = setInterval(() => {
-        loadMarkdownFile(file);
+        loadMarkdownFile(file.name, fs.readFileSync(file.path).toString(), () => {
+          fixImageSources(file.path);
+        });
       }, 1000);
-    } catch (err) {}
+    } else {
+      let reader = new FileReader();
+
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64 = reader.result.split(',')[1]; // .split(',')[1] to remove beginning data:text/markdown;base64,
+        const markdownContent = atob(base64);
+
+        loadMarkdownFile(file.name, markdownContent);
+      };
+    }
   } else {
     return alert('File not a markdown file.');
   }
@@ -59,42 +83,40 @@ const updateScrollingStatus = () => {
 window.addEventListener('load', updateScrollingStatus);
 window.addEventListener('scroll', updateScrollingStatus);
 
-const loadMarkdownFile = (file) => {
-  const filename = file.name;
+const loadMarkdownFile = (filename, markdownContent, callback = () => {}) => {
+  let html;
 
-  let reader = new FileReader();
+  try {
+    html = markdown.render(markdownContent);
+  } catch {
+    return alert('Invalid Markdown');
+  }
 
-  reader.readAsDataURL(file);
-  reader.onload = () => {
-    console.log(reader);
-    const base64 = reader.result.split(',')[1]; // .split(',')[1] to remove beginning data:text/markdown;base64,
-    const markdownContent = atob(base64);
+  const contentElm = document.getElementById('content');
 
-    let html;
+  // don't do anything if no changes have been made
+  if (currentFileMarkdown === markdownContent) {
+    return;
+  }
 
-    try {
-      html = markdown.render(markdownContent);
-    } catch {
-      return alert('Invalid Markdown');
-    }
+  currentFileMarkdown = markdownContent;
+  contentElm.innerHTML = html;
 
-    const contentElm = document.getElementById('content');
+  convertLinkElmsToBrowserOpens(contentElm);
 
-    // only update when changes have been made
-    if (currentFileMarkdown !== markdownContent) {
-      currentFileMarkdown = markdownContent;
-      contentElm.innerHTML = html;
-    }
+  reloadSyntaxHighlighter();
 
-    convertLinkElmsToBrowserOpens(contentElm);
+  const wordCount = getWordCount(contentElm.innerText);
+  const wordCountText = `${wordCount} words`;
+  const readTimeText = `~${getReadTimeMinutes(READ_WPM, wordCount)} min read (${READ_WPM} wpm)`;
 
-    reloadSyntaxHighlighter();
+  document.getElementById('meta').innerText = `${filename}\n${wordCountText}\n${readTimeText}`;
 
-    const wordCount = getWordCount(contentElm.innerText);
-    document.getElementById('meta').innerText = `${filename}
-${wordCount} words
-~${getReadTimeMinutes(READ_WPM, wordCount)} min read (${READ_WPM} wpm)`;
-  };
+  filenameHTML = filename.replace(/</g, '&lt;');
+  filenameHTML = filenameHTML.replace(/>/g, '&gt;');
+  document.getElementById('metasmall').innerHTML = `<span>${filename}</span><span>${wordCountText}</span><span>${readTimeText}</span>`;
+
+  callback();
 };
 
 // opens links with default web browser rather than within the desktop app
@@ -128,4 +150,22 @@ const reloadSyntaxHighlighter = () => {
   const newScript = document.createElement('script');
   newScript.src = syntaxHighlighterFilePath;
   head.appendChild(newScript);
+};
+
+const fixImageSources = (originURL) => {
+  const originDir = path.dirname(originURL);
+  const absolutePath = new RegExp('^(?:[a-z]+:)?//', 'i');
+  document
+    .querySelector('#content')
+    .querySelectorAll('img')
+    .forEach((img) => {
+      const src = img.getAttribute('src');
+      const isAbsolute = absolutePath.test(src);
+      console.log(img, src, isAbsolute);
+      if (!isAbsolute) {
+        const newSrc = path.join(originDir, src);
+        console.log(newSrc);
+        img.setAttribute('src', newSrc);
+      }
+    });
 };

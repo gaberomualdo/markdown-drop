@@ -80,7 +80,8 @@ pre code {
   padding: 0 !important;
 }
 
-#meta {
+#meta,
+#metasmall {
   margin: 0;
   font-size: 1.1rem;
   line-height: 1;
@@ -94,23 +95,43 @@ pre code {
   color: #888;
   line-height: 1.5;
   text-align: right;
-  transition: right 0.3s, box-shadow 0.3s;
 }
+
+#metasmall {
+  width: 100%;
+  padding: 0.5rem 0;
+  right: 0 !important;
+  top: 0 !important;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.3s, box-shadow 0.3s;
+}
+#metasmall span {
+  margin: 0 0.5rem;
+}
+
 @media print {
-  body #meta {
+  #meta,
+  #metasmall {
     display: none;
   }
 }
 
 @media only screen and (max-width: 1200px) {
+  #metasmall {
+    opacity: 1;
+    pointer-events: all;
+    z-index: 9999;
+  }
   #meta {
-    right: calc((100vw - var(--width)) / 2 - 1rem);
-    border-top-left-radius: 0;
+    display: none;
   }
   body #content {
-    margin-top: 5rem;
+    margin-top: 1rem;
   }
-  body.scrolled #meta {
+  body.scrolled #metasmall {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 }
@@ -118,6 +139,10 @@ pre code {
   body #content {
     margin-top: 0;
   }
+}
+
+body.printing * {
+  transition-duration: 0s !important;
 }
 
 .wysiwyg h1,
@@ -133,8 +158,8 @@ pre code {
   font-weight: 600 !important;
 }
 
-body.printing * {
-  transition-duration: 0s !important;
+.wysiwyg img {
+  max-width: 100%;
 }
 
 pre::-webkit-scrollbar {

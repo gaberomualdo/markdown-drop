@@ -1,7 +1,7 @@
 {
-  "name": "markdown-print-pdf",
+  "name": "markdowndrop",
   "version": "1.0.0",
-  "description": "Desktop app to print (or convert to PDF) a markdown file with drag & drop.",
+  "description": "Drag and drop a markdown file to view, print, or export to PDF.",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
