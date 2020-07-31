@@ -1,0 +1,142 @@
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/Inter-Bold.otf) format('otf');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/Inter-Bold.otf) format('otf');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/Inter-SemiBold.otf) format('otf');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/Inter-SemiBoldItalic.otf) format('otf');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/Inter-Regular.otf) format('otf');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/Inter-Italic.otf) format('otf');
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background-color: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  display: flex;
+  justify-content: center;
+  --width: 750px;
+}
+#content {
+  width: var(--width);
+  flex-basis: var(--width);
+  padding: 2rem 1rem;
+  transition: margin-top 0.3s;
+}
+
+@media print {
+  body {
+    --width: 750px !important;
+    min-width: calc(750px + 2rem);
+  }
+  #content {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  body {
+    --width: calc(100% - 50px);
+  }
+}
+
+pre code {
+  padding: 0 !important;
+}
+
+#meta {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1;
+  position: fixed;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 3px;
+  border-top-right-radius: 0;
+  top: 0;
+  right: 0;
+  color: #888;
+  line-height: 1.5;
+  text-align: right;
+  transition: right 0.3s, box-shadow 0.3s;
+}
+@media print {
+  body #meta {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  #meta {
+    right: calc((100vw - var(--width)) / 2 - 1rem);
+    border-top-left-radius: 0;
+  }
+  body #content {
+    margin-top: 5rem;
+  }
+  body.scrolled #meta {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+@media only print {
+  body #content {
+    margin-top: 0;
+  }
+}
+
+.wysiwyg h1,
+.wysiwyg h2,
+.wysiwyg h3,
+.wysiwyg h4,
+.wysiwyg h5,
+.wysiwyg h6 {
+  line-height: 1.35 !important;
+}
+
+.wysiwyg strong {
+  font-weight: 600 !important;
+}
+
+body.printing * {
+  transition-duration: 0s !important;
+}
+
+pre::-webkit-scrollbar {
+  height: 0;
+}

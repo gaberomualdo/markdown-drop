@@ -1,0 +1,24 @@
+{
+  "name": "markdown-print-pdf",
+  "version": "1.0.0",
+  "description": "Desktop app to print (or convert to PDF) a markdown file with drag & drop.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xtrp/markdown-print-pdf.git"
+  },
+  "author": "Fred Adams <xtrp@xtrp.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xtrp/markdown-print-pdf/issues"
+  },
+  "homepage": "https://github.com/xtrp/markdown-print-pdf#readme",
+  "devDependencies": {
+    "electron": "^9.1.2",
+    "electron-builder": "^22.8.0",
+    "markdown-it": "^11.0.0"
+  }
+}
