@@ -2,9 +2,10 @@ let ipcRenderer;
 let hasElectron = false;
 let fs;
 let path;
+let shell;
 
 try {
-  ({ ipcRenderer } = require('electron'));
+  ({ ipcRenderer, shell } = require('electron'));
 
   ipcRenderer.on('begin-print', () => {
     document.body.classList.add('printing');
@@ -32,6 +33,10 @@ document.addEventListener('drop', (event) => {
   event.preventDefault();
   event.stopPropagation();
 
+  if (!event.dataTransfer || !event.dataTransfer.files || !event.dataTransfer.files[0]) {
+    return;
+  }
+
   const file = Array.from(event.dataTransfer.files)[0];
 
   if (file.type === 'text/markdown') {
@@ -41,15 +46,11 @@ document.addEventListener('drop', (event) => {
     }
 
     if (hasElectron) {
-      loadMarkdownFile(file.name, fs.readFileSync(file.path).toString(), () => {
-        fixImageSources(file.path);
-      });
+      loadMarkdownFile(file.name, fs.readFileSync(file.path).toString(), file.path);
 
       // reload periodically
       fileReloadInterval = setInterval(() => {
-        loadMarkdownFile(file.name, fs.readFileSync(file.path).toString(), () => {
-          fixImageSources(file.path);
-        });
+        loadMarkdownFile(file.name, fs.readFileSync(file.path).toString(), file.path);
       }, 1000);
     } else {
       let reader = new FileReader();
@@ -83,7 +84,7 @@ const updateScrollingStatus = () => {
 window.addEventListener('load', updateScrollingStatus);
 window.addEventListener('scroll', updateScrollingStatus);
 
-const loadMarkdownFile = (filename, markdownContent, callback = () => {}) => {
+const loadMarkdownFile = (filename, markdownContent, imageOriginURL = '') => {
   let html;
 
   try {
@@ -116,14 +117,21 @@ const loadMarkdownFile = (filename, markdownContent, callback = () => {}) => {
   filenameHTML = filenameHTML.replace(/>/g, '&gt;');
   document.getElementById('metasmall').innerHTML = `<span>${filename}</span><span>${wordCountText}</span><span>${readTimeText}</span>`;
 
-  callback();
+  fixImageSources(imageOriginURL);
 };
 
 // opens links with default web browser rather than within the desktop app
 const convertLinkElmsToBrowserOpens = (container) => {
   container.querySelectorAll('a').forEach((linkElm) => {
-    if (linkElm.getAttribute('href')) {
-      linkElm.setAttribute('href', "javascript:shell.openExternal('" + linkElm.getAttribute('href').replace(/\'/g, "\\'") + "');");
+    if (linkElm.getAttribute('href') && linkElm.getAttribute('href').trim().length > 0) {
+      if (hasElectron) {
+        linkElm.setAttribute('href', "javascript:shell.openExternal('" + linkElm.getAttribute('href').replace(/\'/g, "\\'") + "');");
+      } else {
+        linkElm.setAttribute('target', '_blank');
+        linkElm.setAttribute('rel', 'noreferrer noopener');
+      }
+    } else {
+      linkElm.removeAttribute('href');
     }
   });
 };
@@ -153,19 +161,31 @@ const reloadSyntaxHighlighter = () => {
 };
 
 const fixImageSources = (originURL) => {
-  const originDir = path.dirname(originURL);
   const absolutePath = new RegExp('^(?:[a-z]+:)?//', 'i');
-  document
-    .querySelector('#content')
-    .querySelectorAll('img')
-    .forEach((img) => {
-      const src = img.getAttribute('src');
-      const isAbsolute = absolutePath.test(src);
-      console.log(img, src, isAbsolute);
-      if (!isAbsolute) {
-        const newSrc = path.join(originDir, src);
-        console.log(newSrc);
-        img.setAttribute('src', newSrc);
-      }
-    });
+  if (hasElectron) {
+    const originDir = path.dirname(originURL);
+    document
+      .querySelector('#content')
+      .querySelectorAll('img')
+      .forEach((img) => {
+        const src = img.getAttribute('src');
+        const isAbsolute = absolutePath.test(src);
+        if (!isAbsolute) {
+          const newSrc = path.join(originDir, src);
+          img.setAttribute('src', newSrc);
+        }
+      });
+  } else {
+    document
+      .querySelector('#content')
+      .querySelectorAll('img')
+      .forEach((img) => {
+        const src = img.getAttribute('src');
+        const isAbsolute = absolutePath.test(src);
+        if (!isAbsolute) {
+          const newSrc = 'imagerelativeerror.png';
+          img.setAttribute('src', newSrc);
+        }
+      });
+  }
 };
