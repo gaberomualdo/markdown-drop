@@ -53,6 +53,19 @@ body {
   --width: 750px;
 }
 
+body:not(.has-content) {
+  background-image: url(dragbg.png);
+  background-repeat: no-repeat;
+  background-color: #eee;
+  background-position: center center;
+  background-size: 15rem auto;
+  min-height: 100vh;
+}
+
+body.dropping {
+  box-shadow: inset 0 0 0 0.35rem #28f;
+}
+
 #refresh {
   border: none;
   position: fixed;
@@ -83,6 +96,10 @@ body {
   flex-basis: var(--width);
   padding: 2rem 1rem;
   transition: margin-top 0.3s;
+}
+
+body:not(.has-content) #content {
+  display: none;
 }
 
 @media print {
@@ -123,6 +140,11 @@ pre code {
   text-align: right;
 }
 
+body:not(.has-content) #meta,
+body:not(.has-content) #metasmall {
+  display: none;
+}
+
 #metasmall {
   width: 100%;
   padding: 0.5rem 0;
@@ -153,7 +175,7 @@ pre code {
   left: 0;
   transition: top 0.3s;
 }
-.hasContent #buttons {
+.has-content #buttons {
   display: none;
 }
 #buttons button {
@@ -178,7 +200,7 @@ pre code {
 }
 
 @media only screen and (max-width: 1200px) {
-  .hasContent #buttons {
+  .has-content #buttons {
     top: 2rem;
   }
 

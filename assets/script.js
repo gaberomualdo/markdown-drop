@@ -38,6 +38,8 @@ document.addEventListener('drop', (event) => {
   event.preventDefault();
   event.stopPropagation();
 
+  document.body.classList.remove('dropping');
+
   if (!event.dataTransfer || !event.dataTransfer.files || !event.dataTransfer.files[0]) {
     return;
   }
@@ -94,6 +96,20 @@ const updateScrollingStatus = () => {
 window.addEventListener('load', updateScrollingStatus);
 window.addEventListener('scroll', updateScrollingStatus);
 
+const updateBodyMinHeight = () => {
+  document.body.setAttribute('style', 'min-height: ' + window.innerHeight + 'px !important');
+};
+
+window.addEventListener('load', updateBodyMinHeight);
+window.addEventListener('scroll', updateBodyMinHeight);
+
+document.addEventListener('dragenter', () => {
+  document.body.classList.add('dropping');
+});
+document.addEventListener('dragleave', () => {
+  document.body.classList.remove('dropping');
+});
+
 const loadMarkdownFile = (filename, markdownContent, imageOriginURL = '', forceRefresh = false) => {
   let html;
 
@@ -110,7 +126,7 @@ const loadMarkdownFile = (filename, markdownContent, imageOriginURL = '', forceR
     return;
   }
 
-  document.body.classList.add('hasContent');
+  document.body.classList.add('has-content');
 
   currentFileMarkdown = markdownContent;
   contentElm.innerHTML = html;
