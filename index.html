@@ -3,9 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Site Under Construction</title>
+    <title>Markdown Print/PDF</title>
+    <link rel="stylesheet" href="assets/main.css" />
+    <link rel="stylesheet" href="assets/wysiwyg.css" />
+    <link rel="stylesheet" href="assets/prism.css" />
   </head>
   <body>
-    <h1>Site under construction. Contact <kbd>xtrp@xtrp.io</kbd> for more details.</h1>
+    <div id="buttons">
+      <button onclick='btnClick("features");this.blur();'>features</button>
+      <button onclick='btnClick("credits");this.blur();'>credits</button>
+      <button onclick='btnClick("desktopapp");this.blur();' id="desktopappbtn" style="display: none;">desktop app</button>
+    </div>
+    <button id="refresh" style="display: none;" onclick="refreshContent(true); this.blur();">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <path
+          d="M13.5 2c-5.629 0-10.212 4.436-10.475 10h-3.025l4.537 5.917 4.463-5.917h-2.975c.26-3.902 3.508-7 7.475-7 4.136 0 7.5 3.364 7.5 7.5s-3.364 7.5-7.5 7.5c-2.381 0-4.502-1.119-5.876-2.854l-1.847 2.449c1.919 2.088 4.664 3.405 7.723 3.405 5.798 0 10.5-4.702 10.5-10.5s-4.702-10.5-10.5-10.5z"
+        />
+      </svg>
+    </button>
+    <div id="content" class="wysiwyg"></div>
+    <p id="meta"></p>
+    <p id="metasmall"></p>
+
+    <script src="node_modules/markdown-it/dist/markdown-it.min.js"></script>
+    <script src="assets/script.js"></script>
   </body>
 </html>

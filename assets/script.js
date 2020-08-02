@@ -28,6 +28,11 @@ const READ_WPM = 265;
 
 let fileReloadInterval;
 let currentFileMarkdown;
+let refreshContent;
+
+if (!hasElectron) {
+  document.getElementById('desktopappbtn').style.display = 'block';
+}
 
 document.addEventListener('drop', (event) => {
   event.preventDefault();
@@ -43,15 +48,20 @@ document.addEventListener('drop', (event) => {
     // clear reload interval if applicable
     if (fileReloadInterval) {
       clearInterval(fileReloadInterval);
+      refreshContent = undefined;
     }
 
     if (hasElectron) {
+      document.getElementById('refresh').style.display = 'block';
+
       loadMarkdownFile(file.name, fs.readFileSync(file.path).toString(), file.path);
 
+      refreshContent = (forceRefresh = false) => {
+        loadMarkdownFile(file.name, fs.readFileSync(file.path).toString(), file.path, forceRefresh);
+      };
+
       // reload periodically
-      fileReloadInterval = setInterval(() => {
-        loadMarkdownFile(file.name, fs.readFileSync(file.path).toString(), file.path);
-      }, 1000);
+      fileReloadInterval = setInterval(refreshContent, 1000);
     } else {
       let reader = new FileReader();
 
@@ -84,7 +94,7 @@ const updateScrollingStatus = () => {
 window.addEventListener('load', updateScrollingStatus);
 window.addEventListener('scroll', updateScrollingStatus);
 
-const loadMarkdownFile = (filename, markdownContent, imageOriginURL = '') => {
+const loadMarkdownFile = (filename, markdownContent, imageOriginURL = '', forceRefresh = false) => {
   let html;
 
   try {
@@ -95,10 +105,12 @@ const loadMarkdownFile = (filename, markdownContent, imageOriginURL = '') => {
 
   const contentElm = document.getElementById('content');
 
-  // don't do anything if no changes have been made
-  if (currentFileMarkdown === markdownContent) {
+  // don't do anything if no changes have been made (and force refresh has been turned off)
+  if (!forceRefresh && currentFileMarkdown === markdownContent) {
     return;
   }
+
+  document.body.classList.add('hasContent');
 
   currentFileMarkdown = markdownContent;
   contentElm.innerHTML = html;
@@ -187,5 +199,72 @@ const fixImageSources = (originURL) => {
           img.setAttribute('src', newSrc);
         }
       });
+  }
+};
+
+const btnClick = (btn) => {
+  if (btn === 'features') {
+    loadMarkdownFile(
+      'features.md',
+      `# MarkdownDrop Features
+
+MarkdownDrop is a quick and easy way to view and print markdown files.
+
+### Out of the box, MarkdownDrop...
+
+- Parses markdown and performs syntax highlighting on code blocks
+- Shows word count and read time given 265 wpm (as used by Medium)
+- Displays images from public URLs
+
+### The MarkdownDrop Desktop App...
+
+- Displays images from local URLs and parses relative URLs as well
+- Refreshes the markdown file automatically every second
+- Has a refresh button for manually refreshing images and other sources
+- Works offline`,
+      '',
+      true
+    );
+  } else if (btn === 'credits') {
+    loadMarkdownFile(
+      'credits.md',
+      `# MarkdownDrop Credits
+
+MarkdownDrop is built by:
+
+- Fred Adams ([xtrp.io](https://xtrp.io/), [@xtrp on GitHub](https://github.com/xtrp))
+
+If you are a contributor and not listed here, [Submit an issue](https://github.com/xtrp/markdowndrop/issues/new/).
+
+MarkdownDrop is open sourced on GitHub at [this repository](https://github.com/xtrp/markdowndrop).
+
+Feel free to contribute on the GitHub repository.`,
+      '',
+      true
+    );
+  } else if (btn === 'desktopapp' && !hasElectron) {
+    loadMarkdownFile(
+      'desktop-app.md',
+      `# MarkdownDrop Desktop App
+
+### Features:
+
+- Displays images from local URLs and parses relative URLs as well
+- Refreshes the markdown file automatically every second
+- Has a refresh button for manually refreshing images and other sources
+- Works offline`,
+      '',
+      true
+    );
+  } else {
+    return;
+  }
+
+  document.getElementById('refresh').style.display = 'none';
+  refreshContent = undefined;
+
+  // clear reload interval if applicable
+  if (fileReloadInterval) {
+    clearInterval(fileReloadInterval);
   }
 };

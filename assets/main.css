@@ -52,6 +52,32 @@ body {
   justify-content: center;
   --width: 750px;
 }
+
+#refresh {
+  border: none;
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  width: 3rem;
+  height: 3rem;
+  z-index: 9999;
+  box-shadow: 0 0.075rem 0.3rem rgba(55, 71, 79, 0.325);
+  outline-color: #333;
+  border-radius: 4px;
+  background-color: #fff;
+  box-sizing: border-box;
+  padding: 0.55rem;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, fill 0.2s;
+  cursor: pointer;
+  fill: #333333;
+}
+#refresh svg {
+  display: block;
+  float: left;
+  width: 100%;
+  height: 100%;
+}
+
 #content {
   width: var(--width);
   flex-basis: var(--width);
@@ -119,7 +145,43 @@ pre code {
   }
 }
 
+#buttons {
+  margin: 0;
+  position: fixed;
+  padding: 1rem;
+  top: 0;
+  left: 0;
+  transition: top 0.3s;
+}
+.hasContent #buttons {
+  display: none;
+}
+#buttons button {
+  border: none;
+  background-color: transparent;
+  font-size: 1.2rem;
+  line-height: 1.65;
+  outline-color: #333333;
+  color: #888;
+  display: block;
+  cursor: pointer;
+}
+#buttons button:hover {
+  color: #333;
+  text-decoration: underline;
+}
+
+@media only screen and (min-width: 1000px) {
+  #buttons {
+    display: block !important;
+  }
+}
+
 @media only screen and (max-width: 1200px) {
+  .hasContent #buttons {
+    top: 2rem;
+  }
+
   #metasmall {
     opacity: 1;
     pointer-events: all;
