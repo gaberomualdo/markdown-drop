@@ -248,7 +248,7 @@ MarkdownDrop is a quick and easy way to view and print markdown files.
 
 MarkdownDrop is built by:
 
-- Fred Adams ([xtrp.io](https://xtrp.io/), [@xtrp on GitHub](https://github.com/xtrp))
+- Gabriel Romualdo ([xtrp.io](https://xtrp.io/), [@xtrp on GitHub](https://github.com/xtrp))
 
 If you are a contributor and not listed here, [Submit an issue](https://github.com/xtrp/markdowndrop/issues/new/).
 

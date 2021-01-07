@@ -4,7 +4,13 @@
   "description": "Drag and drop a markdown file to view, print, or export to PDF.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "postinstall": "install-app-deps",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "productName": "MarkdownDrop"
   },
   "repository": {
     "type": "git",

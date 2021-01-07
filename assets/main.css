@@ -62,7 +62,7 @@ body:not(.has-content) {
   min-height: 100vh;
 }
 
-body.dropping {
+body.dropping:not(.has-content) {
   box-shadow: inset 0 0 0 0.35rem #28f;
 }
 
@@ -83,6 +83,9 @@ body.dropping {
   transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, fill 0.2s;
   cursor: pointer;
   fill: #333333;
+}
+body.printing #refresh{
+  display: none;
 }
 #refresh svg {
   display: block;
@@ -162,8 +165,9 @@ body:not(.has-content) #metasmall {
 
 @media print {
   #meta,
-  #metasmall {
-    display: none;
+  #metasmall,
+  #refresh {
+    display: none !important;
   }
 }
 
