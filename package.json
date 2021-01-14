@@ -7,10 +7,18 @@
     "start": "electron .",
     "postinstall": "install-app-deps",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder -mw"
   },
   "build": {
-    "productName": "MarkdownDrop"
+    "productName": "MarkdownDrop",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "icon": "build/icon.icns"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    }
   },
   "repository": {
     "type": "git",
