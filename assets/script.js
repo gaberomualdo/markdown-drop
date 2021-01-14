@@ -76,7 +76,7 @@ document.addEventListener('drop', (event) => {
       };
     }
   } else {
-    return alert('File not a markdown file.');
+    return alert("This file doesn't look like a Markdown file.");
   }
 });
 
@@ -139,7 +139,9 @@ const loadMarkdownFile = (filename, markdownContent, imageOriginURL = '', forceR
   const wordCountText = `${wordCount} words`;
   const readTimeText = `~${getReadTimeMinutes(READ_WPM, wordCount)} min read (${READ_WPM} wpm)`;
 
-  document.getElementById('meta').innerText = `${filename}\n${wordCountText}\n${readTimeText}`;
+  document.querySelector('.back-to-open-file-container').style.display = 'block';
+
+  document.getElementById('meta').innerHTML = `${filename}<br/>${wordCountText}<br/>${readTimeText}`;
 
   filenameHTML = filename.replace(/</g, '&lt;');
   filenameHTML = filenameHTML.replace(/>/g, '&gt;');
@@ -226,13 +228,13 @@ const btnClick = (btn) => {
 
 MarkdownDrop is a quick and easy way to view and print markdown files.
 
-### Out of the box, MarkdownDrop...
+### Out of the Box, MarkdownDrop:
 
 - Parses markdown and performs syntax highlighting on code blocks
 - Shows word count and read time given 265 wpm (as used by Medium)
 - Displays images from public URLs
 
-### The MarkdownDrop Desktop App...
+### The MarkdownDrop Desktop App:
 
 - Displays images from local URLs and parses relative URLs as well
 - Refreshes the markdown file automatically every second
@@ -254,7 +256,37 @@ If you are a contributor and not listed here, [Submit an issue](https://github.c
 
 MarkdownDrop is open sourced on GitHub at [this repository](https://github.com/xtrp/markdowndrop).
 
-Feel free to contribute on the GitHub repository.`,
+Feel free to contribute to the GitHub repository.`,
+      '',
+      true
+    );
+  } else if (btn === 'about') {
+    loadMarkdownFile(
+      'about.md',
+      `# About MarkdownDrop
+
+### What is MarkdownDrop?
+
+MarkdownDrop is the simplest, most efficient way to view and print Markdown files. It's available as both a web and desktop app, and was built by [Gabriel Romualdo](https://xtrp.io/).
+
+### Why MarkdownDrop?
+
+MarkdownDrop is extremely easy to use and provides useful information on Markdown files such as word count, and placement on popular readability scales. Code highlighting is also done out-of-the-box with MarkdownDrop, and over 100 languages are supported. On the desktop app, the contents of each Markdown file is refreshed automatically. MarkdownDrop also automatically formats files for printing.
+
+### Technologies Used
+
+MarkdownDrop is built with the following technologies:
+
+ - Electron.js
+ - Node.js
+ - MarkdownIt
+ - Prism
+ - HTML, CSS, JavaScript
+
+### More Information
+
+For more information, click on the buttons on the left side of the app to see MarkdownDrop's features, credits, and more.
+`,
       '',
       true
     );

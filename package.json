@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xtrp/markdown-print-pdf.git"
+    "url": "git+https://github.com/xtrp/markdowndrop.git"
   },
-  "author": "Fred Adams <xtrp@xtrp.io>",
+  "author": "Gabriel Romualdo <xtrp@xtrp.io>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/xtrp/markdown-print-pdf/issues"
+    "url": "https://github.com/xtrp/markdowndrop/issues"
   },
-  "homepage": "https://github.com/xtrp/markdown-print-pdf#readme",
+  "homepage": "https://github.com/xtrp/markdowndrop#readme",
   "devDependencies": {
     "electron": "^9.1.2",
     "electron-builder": "^22.8.0",
